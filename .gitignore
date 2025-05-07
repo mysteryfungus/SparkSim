@@ -46,3 +46,12 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/settings.json
+UserSettings/EditorUserSettings.asset
+UserSettings/Search.index
+.gitignore
+UserSettings/Layouts/CurrentMaximizeLayout.dwlt
+UserSettings/Search.settings
+UserSettings/Layouts/default-6000.dwlt
