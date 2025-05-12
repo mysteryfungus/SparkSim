@@ -9,7 +9,11 @@ public class PlacementSystem : MonoBehaviour
     [Header("Grid Settings")]
     public GridLayout gridLayout;
     public LayerMask gridLayerMask;
-    private Grid grid;
+    public Grid grid;
+
+    [Header("Board Settings")]
+    [SerializeField] public Vector2Int boardSize = new Vector2Int(10, 10); // Размер пегборда в клетках
+    [SerializeField] public Vector2Int boardOffset = Vector2Int.zero; // Смещение начала координат пегборда
 
     [Header("Drag Settings")]
     public float lerpSpeed = 15f;
@@ -32,15 +36,48 @@ public class PlacementSystem : MonoBehaviour
         grid = gridLayout.gameObject.GetComponent<Grid>();
     }
 
+    // Проверяет, находится ли позиция в пределах пегборда
+    public bool IsWithinBoardBounds(Vector2Int position)
+    {
+        return position.x >= boardOffset.x && 
+               position.x < boardOffset.x + boardSize.x &&
+               position.y >= boardOffset.y && 
+               position.y < boardOffset.y + boardSize.y;
+    }
+
+    // Проверяет, находятся ли все клетки объекта в пределах пегборда
+    private bool AreAllCellsWithinBounds(List<Vector2Int> cells)
+    {
+        foreach (var cell in cells)
+        {
+            if (!IsWithinBoardBounds(cell))
+                return false;
+        }
+        return true;
+    }
+
     // Начинает процесс перетаскивания объекта
     public GameObject StartDragging(GameObject prefab)
     {
         if (currentDraggingObject != null) return null;
 
-        Vector3 spawnPos = grid.CellToWorld(gridLayout.WorldToCell(Vector3.zero)) + grid.cellSize / 2;
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        // Создаем объект
+        GameObject obj = Instantiate(prefab);
         currentDraggingObject = obj.GetComponent<PlaceableObject>();
+        
+        // Размещаем объект в центре пегборда
+        Vector3 spawnPos = grid.CellToWorld(new Vector3Int(
+            boardOffset.x + boardSize.x / 2,
+            boardOffset.y + boardSize.y / 2,
+            0
+        ));
+        
+        // Инициализируем объект
         currentDraggingObject.Initialize();
+        
+        // Устанавливаем позицию после инициализации
+        obj.transform.position = spawnPos;
+        
         return obj;
     }
 
@@ -74,13 +111,22 @@ public class PlacementSystem : MonoBehaviour
     public void StopDragging(GameObject draggedObject)
     {
         Vector3 finalPos = SnapCoordinateToGrid(draggedObject.transform.position);
-        draggedObject.transform.position = finalPos;
+        Vector2Int gridPos = GetGridPosition(finalPos);
+
+        // Проверяем, находится ли позиция в пределах пегборда
+        if (!IsWithinBoardBounds(gridPos))
+        {
+            // Если позиция вне пегборда, удаляем объект
+            Destroy(draggedObject);
+            currentDraggingObject = null;
+            return;
+        }
 
         if (currentDraggingObject == null) return;
 
         if (CheckPlacementValidity())
         {
-            OccupyCells(currentDraggingObject, GetGridPosition(draggedObject.transform.position));
+            OccupyCells(currentDraggingObject, gridPos);
             currentDraggingObject.OnPlacementComplete();
         }
         else
@@ -116,6 +162,11 @@ public class PlacementSystem : MonoBehaviour
         Vector2Int gridPos = GetGridPosition(currentDraggingObject.transform.position);
         List<Vector2Int> cells = currentDraggingObject.GetOccupiedCells(gridPos);
 
+        // Проверяем границы пегборда
+        if (!AreAllCellsWithinBounds(cells))
+            return false;
+
+        // Проверяем занятость клеток
         foreach (var cell in cells)
         {
             if (occupiedCells.ContainsKey(cell)) return false;
@@ -133,6 +184,12 @@ public class PlacementSystem : MonoBehaviour
     public bool IsPositionValid(Vector2Int gridPosition, PlaceableObject obj)
     {
         List<Vector2Int> cells = obj.GetOccupiedCells(gridPosition);
+
+        // Проверяем границы пегборда
+        if (!AreAllCellsWithinBounds(cells))
+            return false;
+
+        // Проверяем занятость клеток
         foreach (var cell in cells)
         {
             if (occupiedCells.ContainsKey(cell) && occupiedCells[cell] != obj)

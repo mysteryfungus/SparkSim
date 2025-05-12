@@ -29,19 +29,16 @@ public class PlaceableObject : MonoBehaviour
 
     private void CorrectPivotPosition()
     {
-        Vector3 offset = new Vector3(
-            (Size.x % 2 == 0) ? 0.5f : 0f,
-            0f,
-            (Size.y % 2 == 0) ? 0.5f : 0f
-        );
-        transform.position += offset;
+        // Убираем смещение, так как теперь мы будем использовать центр объекта как точку привязки
+        transform.position = PlacementSystem.current.SnapCoordinateToGrid(transform.position);
     }
 
     public List<Vector2Int> GetOccupiedCells(Vector2Int gridPosition)
     {
         List<Vector2Int> cells = new List<Vector2Int>();
-        int startX = gridPosition.x - Mathf.FloorToInt(Size.x / 2f);
-        int startZ = gridPosition.y - Mathf.FloorToInt(Size.y / 2f);
+        // Вычисляем начальную позицию с учетом размера объекта
+        int startX = gridPosition.x - (Size.x - 1) / 2;
+        int startZ = gridPosition.y - (Size.y - 1) / 2;
 
         for (int x = 0; x < Size.x; x++)
         {

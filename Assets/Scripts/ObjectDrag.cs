@@ -7,9 +7,10 @@ public class ObjectDrag : MonoBehaviour
     private PlaceableObject placeableObject;
     private Vector3 targetPosition;
     private bool isDragging;
-    private Vector3 originalPosition; // Для хранения исходной позиции
+    private Vector3 originalPosition;
 
-    [SerializeField] private float smoothTime = 0.1f;
+    [SerializeField] private float smoothTime = 0.05f; // Уменьшаем время сглаживания
+    [SerializeField] private float maxSpeed = 20f; // Максимальная скорость перемещения
     private Vector3 velocity = Vector3.zero;
 
     private void Awake()
@@ -27,14 +28,23 @@ public class ObjectDrag : MonoBehaviour
 
         if (!PlacementSystem.current.isEditMode) return;
 
-        // Сохраняем позицию перед началом перемещения
         originalPosition = transform.position;
         placeableObject.OnBeginDrag();
         PlacementSystem.current.StartMovingObject(placeableObject);
 
-        // Вычисляем смещение между объектом и мышью
-        mouseZCoord = Camera.main.WorldToScreenPoint(transform.position).z;
-        offset = transform.position - GetMouseWorldPos();
+        // Улучшенное вычисление смещения
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new Plane(Vector3.up, transform.position);
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 hitPoint = ray.GetPoint(distance);
+            offset = transform.position - hitPoint;
+        }
+        else
+        {
+            offset = Vector3.zero;
+        }
+        
         isDragging = true;
     }
 
@@ -42,15 +52,22 @@ public class ObjectDrag : MonoBehaviour
     {
         if (isDragging)
         {
-            // Обновляем позицию объекта
-            Vector3 newPosition = GetMouseWorldPos() + offset;
-            targetPosition = PlacementSystem.current.SnapCoordinateToGrid(newPosition);
+            // Улучшенное получение позиции мыши
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Plane plane = new Plane(Vector3.up, transform.position);
+            if (plane.Raycast(ray, out float distance))
+            {
+                Vector3 hitPoint = ray.GetPoint(distance);
+                targetPosition = PlacementSystem.current.SnapCoordinateToGrid(hitPoint + offset);
+            }
 
+            // Плавное движение с ограничением скорости
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 targetPosition,
                 ref velocity,
-                smoothTime
+                smoothTime,
+                maxSpeed
             );
 
             // Проверяем валидность позиции
@@ -71,20 +88,26 @@ public class ObjectDrag : MonoBehaviour
 
         // Проверяем финальную позицию
         Vector3 finalPosition = PlacementSystem.current.SnapCoordinateToGrid(targetPosition);
-        bool isValid = PlacementSystem.current.IsPositionValid(
-            PlacementSystem.current.GetGridPosition(finalPosition),
-            placeableObject
-        );
+        Vector2Int gridPos = PlacementSystem.current.GetGridPosition(finalPosition);
+
+        // Проверяем, находится ли позиция в пределах пегборда
+        if (!PlacementSystem.current.IsWithinBoardBounds(gridPos))
+        {
+            // Если позиция вне пегборда, удаляем объект
+            PlacementSystem.current.DeleteObject(gameObject);
+            return;
+        }
+
+        // Проверяем валидность позиции
+        bool isValid = PlacementSystem.current.IsPositionValid(gridPos, placeableObject);
 
         if (!isValid)
         {
-            // Возвращаем объект на исходную позицию
             transform.position = originalPosition;
             placeableObject.ResetMaterials();
         }
         else
         {
-            // Фиксируем объект на новой позиции
             transform.position = finalPosition;
             placeableObject.ResetMaterials();
         }
@@ -92,18 +115,10 @@ public class ObjectDrag : MonoBehaviour
         PlacementSystem.current.FinishMovingObject(placeableObject);
     }
 
-    private Vector3 GetMouseWorldPos()
-    {
-        Vector3 mousePoint = Input.mousePosition;
-        mousePoint.z = mouseZCoord;
-        return Camera.main.ScreenToWorldPoint(mousePoint);
-    }
-
     private void OnMouseOver()
     {
         if (!PlacementSystem.current.isEditMode) return;
 
-        // Поворачиваем объект при нажатии клавиши R
         if (Input.GetKeyDown(KeyCode.R))
         {
             placeableObject.Rotate();
