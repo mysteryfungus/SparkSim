@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smoothTime: 0.1
+  maxSpeed: 20
 --- !u!1 &3800852886737547815
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +185,7 @@ GameObject:
   - component: {fileID: 9057241315543991793}
   m_Layer: 7
   m_Name: Contact B
-  m_TagString: Untagged
+  m_TagString: Contact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -237,7 +238,7 @@ GameObject:
   - component: {fileID: 8735490915268335875}
   m_Layer: 7
   m_Name: Contact A
-  m_TagString: Untagged
+  m_TagString: Contact
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

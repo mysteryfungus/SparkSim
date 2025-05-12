@@ -19,6 +19,9 @@ public class ConnectionSystem : MonoBehaviour
     private bool isConnecting = false; // Tracks if a connection process is ongoing
     private Dictionary<GameObject, List<GameObject>> objectToWires = new(); // Tracks wires connected to objects
 
+    [SerializeField] private GameObject contactMarkerPrefab; // Добавлено новое поле
+    private GameObject currentMarker; // Текущий активный маркер
+
     private void FixedUpdate()
     {
         HandleRemoveTool();
@@ -49,40 +52,35 @@ public class ConnectionSystem : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (pointA == null)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit, 100, layerMask))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out hit, 100, layerMask))
+                    pointA = FindNearestContact(hit.point);
+                    if (pointA != null)
                     {
-                        Debug.Log("Got A");
-                        pointA = hit.transform;
-                        isConnecting = true; // Start connection process
+                        SelectContact(pointA);
+                        isConnecting = true;
                     }
                 }
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) && isConnecting)
             {
-                if (pointA != null)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit, 100, layerMask))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out hit, 100, layerMask))
-                    {
-                        Debug.Log("Got B");
-                        pointB = hit.transform;
-                    }
-
-                    if (pointB != null && pointA != pointB)
-                    {
-                        Debug.Log("We wirin!");
-                        CreateWire(pointA, pointB);
-                    }
-
-                    // Reset points and visual feedback after connection
-                    pointA = null;
-                    pointB = null;
-                    isConnecting = false;
+                    pointB = FindNearestContact(hit.point);
                 }
+
+                if (pointB != null && pointA != pointB && Vector3.Distance(pointA.position, pointB.position) < 5f)
+                {
+                    CreateWire(pointA, pointB);
+                }
+
+                DeselectContact();
+                pointA = null;
+                pointB = null;
+                isConnecting = false;
             }
         }
     }
@@ -144,6 +142,55 @@ public class ConnectionSystem : MonoBehaviour
                 Destroy(wire);
             }
             objectToWires.Remove(obj);
+        }
+    }
+
+    private Transform FindNearestContact(Vector3 position, float radius = 0.5f)
+    {
+        Collider[] hits = Physics.OverlapSphere(position, radius, layerMask);
+        Transform nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var hit in hits)
+        {
+            if (IsValidContact(hit.transform))
+            {
+                float distance = Vector3.Distance(position, hit.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearest = hit.transform;
+                }
+            }
+        }
+        return nearest;
+    }
+
+    private bool IsValidContact(Transform contact)
+    {
+        return contact.CompareTag("Contact"); // Или другая проверка, например, по компоненту
+    }
+
+    private void SelectContact(Transform contact)
+    {
+        if (currentMarker != null)
+        {
+            Destroy(currentMarker);
+        }
+
+        if (contactMarkerPrefab != null)
+        {
+            currentMarker = Instantiate(contactMarkerPrefab, contact.position, Quaternion.identity);
+            currentMarker.transform.SetParent(contact);
+        }
+    }
+
+    private void DeselectContact()
+    {
+        if (currentMarker != null)
+        {
+            Destroy(currentMarker);
+            currentMarker = null;
         }
     }
 }
