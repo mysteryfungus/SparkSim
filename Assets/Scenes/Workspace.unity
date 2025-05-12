@@ -667,7 +667,8 @@ MonoBehaviour:
     m_Bits: 256
   wireMaterial: {fileID: 2100000, guid: c22131d28a0058a4f8f17a6db08da76d, type: 2}
   toolManager: {fileID: 330585550}
-  contactMarkerPrefab: {fileID: 14152115795885871, guid: b0f4fbfeebc07a04c824d40e46dbf86a, type: 3}
+  contactHighlightPrefab: {fileID: 14152115795885871, guid: b0f4fbfeebc07a04c824d40e46dbf86a, type: 3}
+  selectedContactPrefab: {fileID: 14152115795885871, guid: 61ca8f16d9a8d5948908f65c3748801c, type: 3}
 --- !u!1 &398826385
 GameObject:
   m_ObjectHideFlags: 0

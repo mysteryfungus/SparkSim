@@ -19,8 +19,10 @@ public class ConnectionSystem : MonoBehaviour
     private bool isConnecting = false; // Tracks if a connection process is ongoing
     private Dictionary<GameObject, List<GameObject>> objectToWires = new(); // Tracks wires connected to objects
 
-    [SerializeField] private GameObject contactMarkerPrefab; // Добавлено новое поле
-    private GameObject currentMarker; // Текущий активный маркер
+    [SerializeField] private GameObject contactHighlightPrefab; // Маркер для всех контактов
+    [SerializeField] private GameObject selectedContactPrefab;  // Маркер для выбранного контакта
+    private GameObject currentSelectedMarker; // Текущий маркер выбранного контакта
+    private List<GameObject> activeContactMarkers = new(); // Список активных общих маркеров
 
     private void FixedUpdate()
     {
@@ -50,38 +52,66 @@ public class ConnectionSystem : MonoBehaviour
     {
         if (toolManager.currentTool == ToolManager.Tools.Connect)
         {
+            // Подсвечиваем все контакты при входе в режим (один раз)
+            if (!isConnecting && activeContactMarkers.Count == 0)
+            {
+                HighlightAllContacts();
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit, 100, layerMask))
                 {
-                    pointA = FindNearestContact(hit.point);
-                    if (pointA != null)
+                    Transform contact = FindNearestContact(hit.point);
+                    if (contact != null)
                     {
-                        SelectContact(pointA);
-                        isConnecting = true;
+                        if (pointA == null)
+                        {
+                            // Выбираем первый контакт
+                            pointA = contact;
+                            SelectContact(pointA); // Подсвечиваем выбранный контакт
+                            isConnecting = true;
+                        }
+                        else if (contact != pointA)
+                        {
+                            // Выбираем второй контакт
+                            pointB = contact;
+                            CreateWire(pointA, pointB);
+                            ResetConnectionState();
+                        }
                     }
                 }
             }
 
-            if (Input.GetMouseButtonUp(0) && isConnecting)
+            // Отмена соединения
+            if (Input.GetMouseButtonDown(1) && pointA != null)
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 100, layerMask))
-                {
-                    pointB = FindNearestContact(hit.point);
-                }
-
-                if (pointB != null && pointA != pointB && Vector3.Distance(pointA.position, pointB.position) < 5f)
-                {
-                    CreateWire(pointA, pointB);
-                }
-
-                DeselectContact();
-                pointA = null;
-                pointB = null;
-                isConnecting = false;
+                ResetConnectionState();
             }
+        }
+        else
+        {
+            // Выход из режима соединения
+            if (isConnecting || activeContactMarkers.Count > 0 || currentSelectedMarker != null)
+            {
+                ResetConnectionState();
+            }
+        }
+    }
+
+    private void ResetConnectionState()
+    {
+        DeselectContact();
+        pointA = null;
+        pointB = null;
+        isConnecting = false;
+        
+        // Полностью обновляем маркеры
+        ClearAllHighlights();
+        if (toolManager.currentTool == ToolManager.Tools.Connect)
+        {
+            HighlightAllContacts();
         }
     }
 
@@ -171,26 +201,76 @@ public class ConnectionSystem : MonoBehaviour
         return contact.CompareTag("Contact"); // Или другая проверка, например, по компоненту
     }
 
+    // Подсвечивает все контакты на сцене
+    private void HighlightAllContacts()
+    {
+        ClearAllHighlights(); // Очищаем старые маркеры
+
+        Collider[] allContacts = Physics.OverlapSphere(Vector3.zero, 1000, layerMask); // Ищем все контакты
+        foreach (var contact in allContacts)
+        {
+            if (IsValidContact(contact.transform))
+            {
+                GameObject marker = Instantiate(contactHighlightPrefab, contact.transform.position, Quaternion.identity);
+                marker.transform.SetParent(contact.transform);
+                activeContactMarkers.Add(marker);
+            }
+        }
+    }
+
+    // Очищает все общие маркеры контактов
+    private void ClearAllHighlights()
+    {
+        for (int i = activeContactMarkers.Count - 1; i >= 0; i--)
+        {
+            if (activeContactMarkers[i] != null)
+            {
+                Destroy(activeContactMarkers[i]);
+            }
+        }
+        activeContactMarkers.Clear();
+    }
+
     private void SelectContact(Transform contact)
     {
-        if (currentMarker != null)
+        if (currentSelectedMarker != null)
         {
-            Destroy(currentMarker);
+            Destroy(currentSelectedMarker);
         }
 
-        if (contactMarkerPrefab != null)
+        // Находим общий маркер для этого контакта и заменяем его на выбранный
+        for (int i = 0; i < activeContactMarkers.Count; i++)
         {
-            currentMarker = Instantiate(contactMarkerPrefab, contact.position, Quaternion.identity);
-            currentMarker.transform.SetParent(contact);
+            if (activeContactMarkers[i] != null && 
+                activeContactMarkers[i].transform.parent == contact)
+            {
+                Destroy(activeContactMarkers[i]);
+                activeContactMarkers.RemoveAt(i);
+                break;
+            }
+        }
+
+        if (selectedContactPrefab != null)
+        {
+            currentSelectedMarker = Instantiate(selectedContactPrefab, contact.position, Quaternion.identity);
+            currentSelectedMarker.transform.SetParent(contact);
         }
     }
 
     private void DeselectContact()
     {
-        if (currentMarker != null)
+        if (currentSelectedMarker != null)
         {
-            Destroy(currentMarker);
-            currentMarker = null;
+            Destroy(currentSelectedMarker);
+            currentSelectedMarker = null;
+        }
+    }
+
+    private void OnToolChanged(ToolManager.Tools newTool)
+    {
+        if (newTool != ToolManager.Tools.Connect)
+        {
+            ResetConnectionState();
         }
     }
 }

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Contact Indicator
+  m_Name: Contact Marker
   m_Shader: {fileID: -6465566751694194690, guid: 6ca93f711118551468ad2a694dd7717c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -42,7 +42,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _Primary_Color: {r: 0.42075467, g: 1, b: 0.43315825, a: 0}
+    - _Primary_Color: {r: 0.48867923, g: 1, b: 0.49019608, a: 0}
     - _Secondary_Color: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
