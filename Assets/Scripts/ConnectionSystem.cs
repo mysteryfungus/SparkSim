@@ -24,6 +24,8 @@ public class ConnectionSystem : MonoBehaviour
     private GameObject currentSelectedMarker; // Текущий маркер выбранного контакта
     private List<GameObject> activeContactMarkers = new(); // Список активных общих маркеров
 
+    public Dictionary<Guid, Guid> ConnectedContacts = new Dictionary<Guid, Guid>();
+
     private void FixedUpdate()
     {
         HandleRemoveTool();
@@ -118,6 +120,21 @@ public class ConnectionSystem : MonoBehaviour
     // Создает соединение между двумя точками
     private void CreateWire(Transform A, Transform B)
     {
+        // Получаем компоненты Contact для обоих контактов
+        Contact contactA = A.GetComponent<Contact>();
+        Contact contactB = B.GetComponent<Contact>();
+
+        if (contactA != null && contactB != null)
+        {
+            // Добавляем пару в словарь соединённых контактов
+            if (!ConnectedContacts.ContainsKey(contactA.Guid) && !ConnectedContacts.ContainsKey(contactB.Guid))
+            {
+                ConnectedContacts[contactA.Guid] = contactB.Guid;
+                ConnectedContacts[contactB.Guid] = contactA.Guid;
+            }
+        }
+
+        // Создаём визуальное соединение (провод)
         GameObject wire = new("Wire");
         wire.AddComponent<Rope>();
         wire.GetComponent<Rope>().SetStartPoint(A);
@@ -152,6 +169,22 @@ public class ConnectionSystem : MonoBehaviour
     // Removes a specific wire
     private void RemoveWire(GameObject wire)
     {
+        // Получаем контакты, соединённые этим проводом
+        Rope rope = wire.GetComponent<Rope>();
+        if (rope != null && rope.StartPoint != null && rope.EndPoint != null)
+        {
+            Contact contactA = rope.StartPoint.GetComponent<Contact>();
+            Contact contactB = rope.EndPoint.GetComponent<Contact>();
+
+            if (contactA != null && contactB != null)
+            {
+                // Удаляем пару из словаря
+                ConnectedContacts.Remove(contactA.Guid);
+                ConnectedContacts.Remove(contactB.Guid);
+            }
+        }
+
+        // Удаляем провод из трекинга
         foreach (var kvp in objectToWires)
         {
             if (kvp.Value.Contains(wire))

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wire
   - Contact
+  - Component
   layers:
   - Default
   - TransparentFX
