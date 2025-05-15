@@ -137,3 +137,53 @@ p.Formula {
   line-height: 1;
   letter-spacing: 0px;
 }
+:root {
+  --borderonly-theme-color: #bfbfbf;
+  --evenrows-theme-color: #bfbfbf;
+  --evenrows-row-color: rgba(191, 191, 191, 0.5);
+}
+table.borderonly {
+  border-collapse: collapse;
+}
+table.borderonly td {
+  padding-top: 2px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--borderonly-theme-color);
+}
+table.borderonly th {
+  padding-top: 2px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--borderonly-theme-color);
+}
+table.evenrows {
+  border-collapse: collapse;
+}
+table.evenrows td {
+  padding-top: 2px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--evenrows-theme-color);
+}
+table.evenrows th {
+  padding-top: 2px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--evenrows-theme-color);
+}
+table.evenrows tr:nth-child(even) td {
+  background-color: var(--evenrows-row-color);
+}
