@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SpiceSharp;
+using UnityEngine.Events;
 
 public abstract class CircuitComponent : MonoBehaviour 
 {
@@ -8,6 +9,7 @@ public abstract class CircuitComponent : MonoBehaviour
     public GameObject icon;
     public abstract void CreateSpiceModel(Circuit circuit);
     public List<Contact> Contacts { get; protected set; }
+    public UnityEvent componentDeleted;
     public enum DrawMode{
         Model,
         Icon

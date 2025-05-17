@@ -2,6 +2,7 @@ using UnityEngine;
 using SpiceSharp;
 using SpiceSharp.Components;
 using System;
+using UnityEngine.Events;
 
 public class Contact : MonoBehaviour {
     public Guid Guid { get; private set; }
@@ -9,10 +10,12 @@ public class Contact : MonoBehaviour {
     public CircuitComponent ParentComponent { get; set; }
     public string TemporaryNodeName { get; set; }
 
+    public UnityEvent contactDeleted;
+
     void Awake() {
         ParentComponent = GetComponentInParent<CircuitComponent>();
         Guid = Guid.NewGuid();
         NodeName = "N_" + Guid.ToString("N");
-        Debug.Log("Initialized contact " + NodeName);
+        Debug.Log("Contact " + NodeName + " initialized");
     }
 }
