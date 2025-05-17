@@ -4,6 +4,8 @@ using SpiceSharp;
 
 public abstract class CircuitComponent : MonoBehaviour 
 {
+    public GameObject model;
+    public GameObject icon;
     public abstract void CreateSpiceModel(Circuit circuit);
     public List<Contact> Contacts { get; protected set; }
     public enum DrawMode{
@@ -11,4 +13,11 @@ public abstract class CircuitComponent : MonoBehaviour
         Icon
     }
     public abstract DrawMode _drawMode {get; set;}
+
+    public void SwitchDrawMode(DrawMode mode)
+    {
+        _drawMode = mode;
+        model.SetActive(mode == DrawMode.Model);
+        icon.SetActive(mode == DrawMode.Icon);
+    }
 }

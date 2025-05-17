@@ -13,9 +13,9 @@ public class ToolboxManager : MonoBehaviour
     [SerializeField] private ToolManager toolManager;
     [SerializeField] private ComponentDrawer componentDrawer;
 
+    public UnityEvent NoneSelected;
     public UnityEvent PlaceSelected;
     public UnityEvent ConnectSelected;
-    public UnityEvent DragSelected;
     public UnityEvent DeleteSelected;
 
     void Start()
@@ -24,21 +24,29 @@ public class ToolboxManager : MonoBehaviour
         switch(toggledButton)
         {
             case 0:
-                SelectPlace();
+                SelectNone();
                 break;
             
             case 1:
-                SelectConnect();
+                SelectPlace();
                 break;
             
             case 2:
-                SelectDrag();
+                SelectConnect();
                 break;
             
             case 3:
                 SelectRemove();
                 break;
         }
+    }
+
+    public void SelectNone()
+    {
+        toolManager.currentTool = ToolManager.Tools.None;
+        NoneSelected.Invoke();
+        componentDrawer.SlideOut();
+        ToggleButton();
     }
 
     public void SelectPlace()
@@ -53,14 +61,6 @@ public class ToolboxManager : MonoBehaviour
     {
         toolManager.currentTool = ToolManager.Tools.Connect;
         ConnectSelected.Invoke();
-        componentDrawer.SlideOut();
-        ToggleButton();
-    }
-
-    public void SelectDrag()
-    {
-        toolManager.currentTool = ToolManager.Tools.Drag;
-        DragSelected.Invoke();
         componentDrawer.SlideOut();
         ToggleButton();
     }

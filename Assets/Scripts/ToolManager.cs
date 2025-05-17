@@ -7,9 +7,9 @@ public class ToolManager : MonoBehaviour
     // Перечисление доступных инструментов
     public enum Tools
     {
+        None,
         Place,
         Connect,
-        Drag,
         Remove
     }
 
@@ -31,7 +31,11 @@ public class ToolManager : MonoBehaviour
                 break;
 
             case Tools.Connect:
-            case Tools.Drag:
+                system.ToggleEditMode(false);
+                system.ToggleDeleteMode(false);
+                break;
+                
+            case Tools.None:
                 system.ToggleEditMode(false);
                 system.ToggleDeleteMode(false);
                 break;
