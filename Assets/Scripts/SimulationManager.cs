@@ -6,5 +6,9 @@ using SpiceSharp.Components;
 using System;
 
 public class SimulationManager : MonoBehaviour {
-    
+    public void DummySimulation()
+    {
+        var ammeter = FindObjectOfType<AmmeterComponent>();
+        ammeter.DummyOutput();
+    }
 }

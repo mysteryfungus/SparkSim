@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Workspace.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Lessons/Lesson Template.unity
+    guid: 121b7972ea8a3cf4c83f3177fd630db8
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: c0c6f6d0a0f08a44d92b085061086f6a, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

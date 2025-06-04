@@ -5059,6 +5059,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 613992298}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MenuManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: Lesson Template
+      objectReference: {fileID: 0}
+    - target: {fileID: 4902417321113771309, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8771778956616091915, guid: daa42400c3c3b7448b299161cfacfbdd, type: 3}
       propertyPath: m_Text
       value: "\u0423\u0440\u043E\u043A 1"
