@@ -6,9 +6,9 @@ public class ResistorComponent : CircuitComponent {
     public override DrawMode _drawMode {get; set;}
     
     public override void CreateSpiceModel(Circuit circuit) {
-        var resistor = new Resistor("R1", 
-            Contacts[0].NodeName, 
-            Contacts[1].NodeName, 
+        var resistor = new Resistor(id,
+            Contacts[0].NodeName,
+            Contacts[1].NodeName,
             Resistance);
         circuit.Add(resistor);
     }

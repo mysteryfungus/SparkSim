@@ -25,7 +25,13 @@ public class AmmeterComponent : CircuitComponent {
         UpdateAmmeterText(current);
     }
 
-    public override void CreateSpiceModel(Circuit circuit) {
-        
+    public override void CreateSpiceModel(Circuit circuit)
+    {
+        var ammeter = new VoltageSource(id,
+            Contacts[0].NodeName,
+            Contacts[1].NodeName,
+            0
+        );
+        circuit.Add(ammeter);
     }
 }

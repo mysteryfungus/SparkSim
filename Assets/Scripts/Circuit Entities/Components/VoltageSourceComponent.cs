@@ -6,7 +6,7 @@ public class VoltageSourceComponent : CircuitComponent {
     public override DrawMode _drawMode {get; set;}
 
     public override void CreateSpiceModel(Circuit circuit) {
-        var source = new VoltageSource("V1", 
+        var source = new VoltageSource(id, 
             Contacts[0].NodeName, 
             Contacts[1].NodeName, 
             Voltage);
