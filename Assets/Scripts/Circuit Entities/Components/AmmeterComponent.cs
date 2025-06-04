@@ -16,6 +16,7 @@ public class AmmeterComponent : CircuitComponent {
         _ammeterText.text = $"Сила тока: {current} A";
     }
 
+    [System.Obsolete]
     public void DummyOutput()
     {
         var voltage = FindObjectOfType<VoltageSourceComponent>();
