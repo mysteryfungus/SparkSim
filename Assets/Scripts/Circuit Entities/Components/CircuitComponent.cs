@@ -28,6 +28,8 @@ public abstract class CircuitComponent : MonoBehaviour
 
     void Awake()
     {
+        Contacts = new();
+        Contacts.AddRange(GetComponentsInChildren<Contact>());
         id = "C_" + Guid.NewGuid().ToString();
     }
 }

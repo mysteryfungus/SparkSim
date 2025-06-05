@@ -2,6 +2,8 @@ using UnityEngine;
 using SpiceSharp;
 using SpiceSharp.Components;
 using TMPro;
+using System.Collections.Generic;
+
 public class AmmeterComponent : CircuitComponent {
 
     [SerializeField]
@@ -16,7 +18,7 @@ public class AmmeterComponent : CircuitComponent {
         _ammeterText.text = $"Сила тока: {current} A";
     }
 
-    [System.Obsolete]
+    [System.Obsolete("This method is deprecated and probably won't work. Why are you even trying to use this?")]
     public void DummyOutput()
     {
         var voltage = FindObjectOfType<VoltageSourceComponent>();
@@ -27,7 +29,9 @@ public class AmmeterComponent : CircuitComponent {
 
     public override void CreateSpiceModel(Circuit circuit)
     {
-        var ammeter = new VoltageSource(id,
+        if(circuit == null) { Debug.LogError("Circuit is null!"); return; }
+        var ammeter = new VoltageSource(
+            id,
             Contacts[0].NodeName,
             Contacts[1].NodeName,
             0

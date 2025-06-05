@@ -17,7 +17,7 @@ public class DeletionManager : MonoBehaviour
         Debug.Log("Entering deletion mode");
         if(controlsShown) return;
 
-        foreach(var wireDeletionButton in FindObjectsOfType<WireDeletionButton>())
+        foreach(var wireDeletionButton in FindObjectsByType<WireDeletionButton>(FindObjectsSortMode.None))
         {
             wireDeletionButton.Show();
         }
@@ -30,7 +30,7 @@ public class DeletionManager : MonoBehaviour
         Debug.Log("Exiting deletion mode");
         if(!controlsShown) return;
 
-        foreach(var wireDeletionButton in FindObjectsOfType<WireDeletionButton>())
+        foreach(var wireDeletionButton in FindObjectsByType<WireDeletionButton>(FindObjectsSortMode.None))
         {
             wireDeletionButton.Hide();
         }

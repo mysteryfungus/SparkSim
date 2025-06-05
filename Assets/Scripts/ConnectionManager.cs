@@ -28,7 +28,7 @@ public class ConnectionManager : MonoBehaviour
         Debug.Log("Entering connection mode");
         if(controlsShown) return;
 
-        foreach(var ConnectionButton in FindObjectsOfType<ConnectionButton>())
+        foreach(var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
         {
             Debug.Log("Showing connection buttons");
             ConnectionButton.Show();
@@ -42,7 +42,7 @@ public class ConnectionManager : MonoBehaviour
         Debug.Log("Exiting connection mode");
         if(!controlsShown) return;
 
-        foreach(var ConnectionButton in FindObjectsOfType<ConnectionButton>())
+        foreach(var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
         {
             Debug.Log("Hiding connection buttons");
             ConnectionButton.Hide();

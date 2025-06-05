@@ -27,7 +27,7 @@ public class DrawModeSwitcher : MonoBehaviour
         }
 
         List<CircuitComponent> components = new();
-        components.AddRange(FindObjectsOfType<CircuitComponent>());
+        components.AddRange(FindObjectsByType<CircuitComponent>(FindObjectsSortMode.None));
 
         foreach (CircuitComponent component in components)
         {

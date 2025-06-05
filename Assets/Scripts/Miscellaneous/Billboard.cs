@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
-    GameObject camera;
+    GameObject sceneCamera;
 
     void Start()
     {
-        camera = Camera.main.gameObject;
+        sceneCamera = Camera.main.gameObject;
     }
 
     void LateUpdate()
     {
-        transform.LookAt(camera.transform);
+        transform.LookAt(sceneCamera.transform);
     }
 }

@@ -27,13 +27,14 @@ namespace DevionGames
         private void OnEnable()
         {
 			this.m_FontMap = new Dictionary<Font, TMP_FontAsset>();
-			this.m_Texts = GameObject.FindObjectsOfType<Text>();
+			this.m_Texts = GameObject.FindObjectsByType<Text>(FindObjectsSortMode.None);
 			for (int i = 0; i < this.m_Texts.Length; i++) {
 				if (!this.m_FontMap.ContainsKey(this.m_Texts[i].font))
 					this.m_FontMap.Add(this.m_Texts[i].font, null);
 			}
         }
 
+        [System.Obsolete]
         private void OnGUI()
         {
 			EditorGUILayout.LabelField("Font:", EditorStyles.boldLabel);
@@ -57,7 +58,8 @@ namespace DevionGames
 			}
 		}
 
-		private void UpdateToTextMeshPro(Text component) {
+        [System.Obsolete]
+        private void UpdateToTextMeshPro(Text component) {
 			bool enabled = component.enabled;
 			string text = component.text;
 			TMP_FontAsset font = this.m_FontMap[component.font];
