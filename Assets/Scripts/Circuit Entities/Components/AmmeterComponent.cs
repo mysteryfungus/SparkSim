@@ -32,8 +32,8 @@ public class AmmeterComponent : CircuitComponent {
         if(circuit == null) { Debug.LogError("Circuit is null!"); return; }
         var ammeter = new VoltageSource(
             id,
-            Contacts[0].NodeName,
-            Contacts[1].NodeName,
+            Contacts[0].TemporaryNodeName,
+            Contacts[1].TemporaryNodeName,
             0
         );
         circuit.Add(ammeter);

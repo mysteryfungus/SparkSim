@@ -12,8 +12,8 @@ public class ResistorComponent : CircuitComponent {
         if (circuit == null) { Debug.LogError("Circuit is null!"); return; }
         var resistor = new Resistor(
             id,
-            Contacts[0].NodeName,
-            Contacts[1].NodeName,
+            Contacts[0].TemporaryNodeName,
+            Contacts[1].TemporaryNodeName,
             Resistance
         );
         circuit.Add(resistor);

@@ -26,9 +26,12 @@ public class ConnectionManager : MonoBehaviour
     public void EnterConnectionMode()
     {
         Debug.Log("Entering connection mode");
-        if(controlsShown) return;
+        if (controlsShown)
+        {
+            return;
+        }
 
-        foreach(var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
+        foreach (var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
         {
             Debug.Log("Showing connection buttons");
             ConnectionButton.Show();
@@ -40,9 +43,12 @@ public class ConnectionManager : MonoBehaviour
     public void ExitConnectionMode()
     {
         Debug.Log("Exiting connection mode");
-        if(!controlsShown) return;
+        if (!controlsShown)
+        {
+            return;
+        }
 
-        foreach(var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
+        foreach (var ConnectionButton in FindObjectsByType<ConnectionButton>(FindObjectsSortMode.None))
         {
             Debug.Log("Hiding connection buttons");
             ConnectionButton.Hide();
@@ -53,35 +59,67 @@ public class ConnectionManager : MonoBehaviour
 
     public void Connect(Contact contact)
     {
-        if(selectedContact == null)
+        if (selectedContact == null)
         {
             Debug.Log("First contact of a connection selected");
             selectedContact = contact;
-        }
-        else
-        {
-            Debug.Log("Second contact of a connection selected");
-            otherContact = contact;
+            return;
         }
 
-        if(selectedContact != null && otherContact != null)
+        if (selectedContact == contact)
         {
-            Debug.Log("Adding connection between " + selectedContact.Guid + " and " + otherContact.Guid);
-            connections.Add(new HashSet<Contact> { selectedContact, otherContact });
-            onConnection.Invoke();
-
-            GameObject wire = Instantiate(wirePrefab);
-            wire.GetComponent<Wire>().SetStartPoint(selectedContact);
-            wire.GetComponent<Wire>().SetEndPoint(otherContact);
-
+            Debug.Log("Cannot connect a contact to itself");
             selectedContact = null;
-            otherContact = null;
+            return;
         }
+
+        Debug.Log($"Adding connection between {selectedContact.Guid} and {contact.Guid}");
+        connections.Add(new HashSet<Contact> { selectedContact, contact });
+        onConnection.Invoke();
+
+        var wire = Instantiate(wirePrefab);
+        var wireComponent = wire.GetComponent<Wire>();
+        wireComponent.SetStartPoint(selectedContact);
+        wireComponent.SetEndPoint(contact);
+
+        selectedContact = null;
     }
 
     public void RemoveConnection(HashSet<Contact> connection)
     {
-        //Debug.Log("Removing connection between " + connection.First.Guid + " and " + connection.Last.Guid);
         connections.Remove(connection);
+    }
+
+    public List<HashSet<Contact>> ConnectionGroups
+    {
+        get
+        {
+            List<HashSet<Contact>> connectionGroupsList = new();
+            foreach (HashSet<Contact> connection in connections)
+            {
+                if (connectionGroupsList.Count == 0)
+                {
+                    connectionGroupsList.Add(connection);
+                    continue;
+                }
+
+                bool isOverlapping = false;
+                foreach (HashSet<Contact> group in ConnectionGroups)
+                {
+                    if (group.Overlaps(connection))
+                    {
+                        group.UnionWith(connection);
+                        isOverlapping = true;
+                        break;
+                    }
+                }
+
+                if (!isOverlapping)
+                {
+                    ConnectionGroups.Add(connection);
+                }
+            }
+            return connectionGroupsList;
+        }
     }
 }

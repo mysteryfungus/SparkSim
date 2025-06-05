@@ -62,16 +62,13 @@ public class SimulationManager : MonoBehaviour
 
     private void FetchComponents()
     {
-        List<CircuitComponent> circuitComponents = new();
-        circuitComponents.AddRange(FindObjectsByType<CircuitComponent>(FindObjectsSortMode.None));
-        foreach (CircuitComponent component in circuitComponents)
+        foreach (var component in FindObjectsByType<CircuitComponent>(FindObjectsSortMode.None))
         {
             component.CreateSpiceModel(circuit);
         }
 
         var components = new List<SpiceSharp.Entities.IEntity>(circuit);
         Debug.Log($"Fetched components for a circuit. Added components: {string.Join(", ", components)}");
-        
     }
 
     [System.Obsolete("This method is deprecated and probably won't work. Try making an actual simulation")]
