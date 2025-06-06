@@ -30,7 +30,7 @@ public class AmmeterComponent : CircuitComponent {
     public override void CreateSpiceModel(Circuit circuit)
     {
         if(circuit == null) { Debug.LogError("Circuit is null!"); return; }
-        var ammeter = new VoltageSource(
+        VoltageSource ammeter = new VoltageSource(
             id,
             Contacts[0].TemporaryNodeName,
             Contacts[1].TemporaryNodeName,

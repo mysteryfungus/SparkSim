@@ -1,38 +1,19 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class IDManager
 {
-    public static HashSet<UInt32> IDList;
-
-    public static UInt32 AssignId() => UniqueID();
-
-    private static UInt32 UniqueID()
+    private static readonly Dictionary<Type, uint> registry = new()
     {
-        if(IDList.Count == 0)
-        {
-            return RandomID();
-        }
+        {typeof(CircuitComponent), 0},
+        {typeof(Contact), 0}
+    };
 
-        while(true)
-        {   
-            UInt32 tempID = RandomID();
-            bool unique = true;
-
-            for(int i = 0; i < IDList.Count; i++)
-            {
-                if(IDList.Contains(tempID)) unique = false;
-            }
-
-            if(unique) return tempID;
-        }
-    }
-
-    public static void RemoveId(UInt32 ID)
+    public static uint AssignID(Type type)
     {
-        if(IDList.Contains(ID)) IDList.Remove(ID);
+        registry.TryGetValue(type, out uint id);
+        id++;
+        registry[type] = id;
+        return id;
     }
-
-    private static UInt32 RandomID() => (UInt32)UnityEngine.Random.Range(0, (float)UInt32.MaxValue);
 }

@@ -10,6 +10,7 @@ public class ConnectionManager : MonoBehaviour
     private Contact selectedContact;
     private Contact otherContact;
 
+    // Each connection is a pair of contacts
     private List<HashSet<Contact>> connections = new();
 
     private bool controlsShown = false;
@@ -90,36 +91,55 @@ public class ConnectionManager : MonoBehaviour
         connections.Remove(connection);
     }
 
-    public List<HashSet<Contact>> ConnectionGroups
+    // Метод для получения групп соединённых контактов
+    public List<HashSet<Contact>> GetConnectionGroups()
     {
-        get
-        {
-            List<HashSet<Contact>> connectionGroupsList = new();
-            foreach (HashSet<Contact> connection in connections)
-            {
-                if (connectionGroupsList.Count == 0)
-                {
-                    connectionGroupsList.Add(connection);
-                    continue;
-                }
+        // Словарь для поиска группы по контакту
+        Dictionary<Contact, HashSet<Contact>> contactToGroup = new();
+        List<HashSet<Contact>> groups = new();
 
-                bool isOverlapping = false;
-                foreach (HashSet<Contact> group in ConnectionGroups)
+        foreach (var connection in connections)
+        {
+            HashSet<Contact> group = null;
+
+            // Найти все группы, к которым уже принадлежат контакты из текущего соединения
+            foreach (var contact in connection)
+            {
+                if (contactToGroup.TryGetValue(contact, out var existingGroup))
                 {
-                    if (group.Overlaps(connection))
+                    if (group == null)
                     {
-                        group.UnionWith(connection);
-                        isOverlapping = true;
-                        break;
+                        group = existingGroup;
+                    }
+                    else if (group != existingGroup)
+                    {
+                        // Объединить группы
+                        group.UnionWith(existingGroup);
+                        // Обновить ссылки в словаре
+                        foreach (var c in existingGroup)
+                        {
+                            contactToGroup[c] = group;
+                        }
+                        groups.Remove(existingGroup);
                     }
                 }
-
-                if (!isOverlapping)
-                {
-                    ConnectionGroups.Add(connection);
-                }
             }
-            return connectionGroupsList;
+
+            // Если ни один контакт не был в группе, создать новую
+            if (group == null)
+            {
+                group = new HashSet<Contact>();
+                groups.Add(group);
+            }
+
+            // Добавить все контакты соединения в группу и словарь
+            foreach (var contact in connection)
+            {
+                group.Add(contact);
+                contactToGroup[contact] = group;
+            }
         }
+
+        return groups;
     }
 }

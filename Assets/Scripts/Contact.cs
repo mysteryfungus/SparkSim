@@ -17,14 +17,14 @@ public class Contact : MonoBehaviour
     {
         ParentComponent = GetComponentInParent<CircuitComponent>();
         Guid = Guid.NewGuid();
-        NodeName = "N_" + Guid.ToString("N");
+        NodeName = "NODE_" + Guid.ToString("N");
         ResetTempName();
         Debug.Log("Contact " + NodeName + " initialized");
     }
 
     public void SetTempName(string name)
     {
-        TemporaryNodeName = name;
+        TemporaryNodeName = "TEMP_NODE_" + name;
     }
 
     public void ResetTempName()
