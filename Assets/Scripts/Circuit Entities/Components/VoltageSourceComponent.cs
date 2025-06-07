@@ -2,10 +2,12 @@ using UnityEngine;
 using SpiceSharp;
 using SpiceSharp.Components;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
-public class VoltageSourceComponent : CircuitComponent {
+public class VoltageSourceComponent : CircuitComponent
+{
     public double Voltage = 5; // Вольт
-    public override DrawMode _drawMode {get; set;}
+    public override DrawMode _drawMode { get; set; }
 
 
     public override void CreateSpiceModel(Circuit circuit)

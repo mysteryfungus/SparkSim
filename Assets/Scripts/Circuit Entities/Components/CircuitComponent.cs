@@ -28,8 +28,11 @@ public abstract class CircuitComponent : MonoBehaviour
 
     void Awake()
     {
+        Type type = GetType();
+        IDManager.RegisterType(type);
+        gameObject.name = $"{type.FullName} {IDManager.AssignID(type)}";
         Contacts = new();
         Contacts.AddRange(GetComponentsInChildren<Contact>());
-        id = "C_" + Guid.NewGuid().ToString();
+        id = type.FullName.ToUpper() + "-" + Guid.NewGuid().ToString();
     }
 }

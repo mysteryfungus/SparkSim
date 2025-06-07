@@ -67,10 +67,10 @@ public class SimulationManager : MonoBehaviour
         var groups = ConnectionManager.instance.GetConnectionGroups();
         foreach (var group in groups)
         {
-            Guid guid = new();
+            Guid groupGuid = Guid.NewGuid();
             foreach (var contact in group)
             {
-                contact.SetTempName(guid.ToString("N"));
+                contact.SetTempName(groupGuid.ToString());
             }
         }
     }

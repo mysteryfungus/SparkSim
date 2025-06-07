@@ -8,7 +8,6 @@ public class ConnectionManager : MonoBehaviour
     public static ConnectionManager instance;
 
     private Contact selectedContact;
-    private Contact otherContact;
 
     // Each connection is a pair of contacts
     private List<HashSet<Contact>> connections = new();

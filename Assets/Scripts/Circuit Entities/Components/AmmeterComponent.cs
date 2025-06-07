@@ -3,18 +3,22 @@ using SpiceSharp;
 using SpiceSharp.Components;
 using TMPro;
 using System.Collections.Generic;
+using System;
 
-public class AmmeterComponent : CircuitComponent {
+public class AmmeterComponent : CircuitComponent
+{
 
     [SerializeField]
     private TextMeshProUGUI _ammeterText;
-    public override DrawMode _drawMode {get; set;}
+    public override DrawMode _drawMode { get; set; }
 
-    void Awake(){
+    void Start()
+    {
         UpdateAmmeterText(0);
     }
 
-    public void UpdateAmmeterText(double current){
+    public void UpdateAmmeterText(double current)
+    {
         _ammeterText.text = $"Сила тока: {current} A";
     }
 
@@ -29,7 +33,7 @@ public class AmmeterComponent : CircuitComponent {
 
     public override void CreateSpiceModel(Circuit circuit)
     {
-        if(circuit == null) { Debug.LogError("Circuit is null!"); return; }
+        if (circuit == null) { Debug.LogError("Circuit is null!"); return; }
         VoltageSource ammeter = new VoltageSource(
             id,
             Contacts[0].TemporaryNodeName,

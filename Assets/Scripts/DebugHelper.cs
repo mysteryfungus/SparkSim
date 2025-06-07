@@ -29,7 +29,7 @@ public class DebugHelper : MonoBehaviour
 
         if(!groups.Any())
         {
-            Debug.Log(TextDecorator.ListPoint("NONE"));
+            Debug.Log(TextDecorator.WarningMessage("None found"));
             return;
         }
 
@@ -42,10 +42,53 @@ public class DebugHelper : MonoBehaviour
             }
         }
     }
+
+    [Button("List Temporary Names In Connection Groups")]
+    public void ListTempNamesInConnectionGroups()
+    {
+        Debug.Log(TextDecorator.Title("Temp Names In Connection Groups:"));
+        var groups = ConnectionManager.instance.GetConnectionGroups();
+
+        if(!groups.Any())
+        {
+            Debug.Log(TextDecorator.WarningMessage("None found"));
+            return;
+        }
+
+        for (int i = 0; i < groups.Count; i++)
+        {
+            Debug.Log(TextDecorator.SubTitle($"GROUP {i + 1}"));
+            foreach (var contact in groups[i])
+            {
+                Debug.Log(TextDecorator.ListPoint(contact.TemporaryNodeName));
+            }
+        }
+    }
+
+    [Button("List Components")]
+    public void ListComponents()
+    {
+        Debug.Log(TextDecorator.Title("Components on the board:"));
+        var components = FindObjectsByType<CircuitComponent>(FindObjectsSortMode.None);
+
+        if (!components.Any())
+        {
+            Debug.Log(TextDecorator.WarningMessage("None found"));
+        }
+
+        foreach (var component in components)
+        {
+            Debug.Log(TextDecorator.ListPoint($"Name: {component.gameObject.name}; Type: {component.GetType().FullName}; ID: {component.id}"));
+        }
+    }
     
     private void ListFieldValues<T>(string fieldName) where T : UnityEngine.Object
     {
         var objects = FindObjectsByType<T>(FindObjectsSortMode.None);
+        if (!objects.Any())
+        {
+            TextDecorator.WarningMessage("None found");
+        }
         foreach (var obj in objects)
         {
             var type = typeof(T);
@@ -76,6 +119,7 @@ public static class TextDecorator
 {
     public static string Title(string text) => Decorate(text, "===");
     public static string SubTitle(string text) => Decorate(text, "=");
+    public static string WarningMessage(string text) => Decorate(text, "#");
     public static string ListPoint(string text) => " - " + text;
 
     private static string Decorate(string text, string decoration) => decoration + " " + text + " " + decoration;
