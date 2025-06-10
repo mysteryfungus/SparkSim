@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections.Generic;
 using System;
 
-public class AmmeterComponent : CircuitComponent
+public class AmmeterComponent : CircuitComponent, IValueReader
 {
 
     [SerializeField]
@@ -14,21 +14,21 @@ public class AmmeterComponent : CircuitComponent
 
     void Start()
     {
-        UpdateAmmeterText(0);
+        UpdateDisplay(0);
     }
 
-    public void UpdateAmmeterText(double current)
+    public void UpdateDisplay(double value)
     {
-        _ammeterText.text = $"Сила тока: {current} A";
+        _ammeterText.text = $"Сила тока: {value} A";
     }
 
-    [System.Obsolete("This method is deprecated and probably won't work. Why are you even trying to use this?")]
+    [Obsolete("This method is deprecated and probably won't work. Why are you even trying to use this?")]
     public void DummyOutput()
     {
         var voltage = FindObjectOfType<VoltageSourceComponent>();
         var resistance = FindObjectOfType<ResistorComponent>();
         var current = voltage.Voltage / resistance.Resistance;
-        UpdateAmmeterText(current);
+        UpdateDisplay(current);
     }
 
     public override void CreateSpiceModel(Circuit circuit)
@@ -41,5 +41,10 @@ public class AmmeterComponent : CircuitComponent
             0
         );
         circuit.Add(ammeter);
+    }
+
+    public override string ToString()
+    {
+        return $"{{Name: {gameObject.name}, ID: {id}}}";
     }
 }
