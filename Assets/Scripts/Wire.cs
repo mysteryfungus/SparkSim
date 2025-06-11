@@ -35,12 +35,21 @@ public class Wire : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private Material GetRandomMaterial(){
-        return wireMaterials[Random.Range(0, wireMaterials.Count)];
+    private Material GetMaterial(){
+        WireColorWindow colorWindow = FindAnyObjectByType<WireColorWindow>(FindObjectsInactive.Include);
+        if (colorWindow.mode == WireColorWindow.SelectedMode.Shuffle)
+        {
+            return wireMaterials[Random.Range(0, wireMaterials.Count)];
+        }
+        else
+        {
+            return wireMaterials[(int)colorWindow.mode - 1];
+        }
+            
     }
 
-    private void RandomizeMaterial(){
-        ropeMesh.material = GetRandomMaterial();
+    private void SetWireMaterial(){
+        ropeMesh.material = GetMaterial();
         GetComponent<MeshRenderer>().material = ropeMesh.material;
     }
 
@@ -54,7 +63,7 @@ public class Wire : MonoBehaviour
         rope.SetEndPoint(end.gameObject.transform);
         ropeMesh = gameObject.AddComponent<RopeMesh>();
         ropeMesh.ropeWidth = 0.001f;
-        RandomizeMaterial();
+        SetWireMaterial();
 
         if(rope == null) Debug.Log("Rope is null!");
         if(ropeMesh == null) Debug.Log("RopeMesh is null!");

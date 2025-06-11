@@ -147,6 +147,7 @@ public class SimulationManager : MonoBehaviour
 
     private class RealtimeSimulation
     {
+        bool test = false;
         readonly Circuit circuit;
         readonly List<IValueReader> valueReaders;
         CancellationTokenSource cancellationToken;
@@ -156,8 +157,20 @@ public class SimulationManager : MonoBehaviour
 
         public RealtimeSimulation(Circuit circuit, List<IValueReader> valueReaders)
         {
-            this.circuit = circuit; this.valueReaders = valueReaders;
-            Reset();
+            if (!test)
+            {
+                this.circuit = circuit; this.valueReaders = valueReaders;
+                Reset();
+            }
+            else
+            {
+                this.circuit = new Circuit(
+                    new VoltageSource("V1", "in", "0", new Pulse(0.0, 5.0, 0.01, 1e-3, 1e-3, 0.02, 0.04)),
+                    new Resistor("R1", "in", "out", 10.0e3),
+                    new Capacitor("C1", "out", "0", 1e-6)
+                );
+
+            }
         }
 
         public void Reset()
@@ -208,7 +221,8 @@ public class SimulationManager : MonoBehaviour
                         }
                         foreach (var currentExport in currentExports)
                         {
-                            Debug.Log($"Writing export data to {currentExport.Item1}");
+                            Debug.Log($"Writing export data to {currentExport.Item1.ToSafeString()}");
+                            Debug.Log($"The value in question is {currentExport.Item2.Value}, btw");
                             currentExport.Item1.UpdateDisplay(currentExport.Item2.Value);
                         }
                     }

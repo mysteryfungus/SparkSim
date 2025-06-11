@@ -16,7 +16,7 @@ public class VoltageSourceComponent : CircuitComponent
         VoltageSource source = new VoltageSource(
             id,
             Contacts[0].TemporaryNodeName,
-            Contacts[1].TemporaryNodeName,
+            "0",
             Voltage
         );
         circuit.Add(source);

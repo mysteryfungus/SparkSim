@@ -220,14 +220,15 @@ MonoBehaviour:
   width: 0.05
   midPoint: {fileID: 3999175128508502733}
   wireMaterials:
-  - {fileID: 2100000, guid: 7f24543e7b620354887d5deb4a97b546, type: 2}
-  - {fileID: 2100000, guid: 5272f944ddb60de44adc8fd17c21a392, type: 2}
   - {fileID: 2100000, guid: 4a4c89570b5b4844fb1143d4889839cb, type: 2}
   - {fileID: 2100000, guid: 404cbd4047ba6eb4cba33439d3554835, type: 2}
   - {fileID: 2100000, guid: da491140d630ae64ca70c34adb534f73, type: 2}
   - {fileID: 2100000, guid: d67f4539ac36103449e626199673405b, type: 2}
+  - {fileID: 2100000, guid: e11fbec91fa2c5f40bcb59ab869dc7d2, type: 2}
   - {fileID: 2100000, guid: 499c08293d90cdc4cacb6d04273ac30e, type: 2}
   - {fileID: 2100000, guid: ec80524805ad0a24e88fc8edde98276b, type: 2}
+  - {fileID: 2100000, guid: 7f24543e7b620354887d5deb4a97b546, type: 2}
+  - {fileID: 2100000, guid: 5272f944ddb60de44adc8fd17c21a392, type: 2}
 --- !u!1 &5881660809983864018
 GameObject:
   m_ObjectHideFlags: 0
