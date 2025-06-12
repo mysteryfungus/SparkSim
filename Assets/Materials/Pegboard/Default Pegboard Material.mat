@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Pegboard Green
+  m_Name: Default Pegboard Material
   m_Shader: {fileID: -6465566751694194690, guid: f0650c80f16eb824aa61de8f0565e3fe, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -52,8 +52,8 @@ Material:
     - _Slot_Radius: 0.15
     - _Tiling_Modifier: 1
     m_Colors:
-    - _Base_Color: {r: 0.1909219, g: 0.6528301, b: 0.4735009, a: 1}
-    - _Grid_Color: {r: 0.1197507, g: 0.45660365, b: 0.3268071, a: 1}
+    - _Base_Color: {r: 0.19092193, g: 0.6528301, b: 0.47350106, a: 1}
+    - _Grid_Color: {r: 0.119750746, g: 0.4566037, b: 0.32680714, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

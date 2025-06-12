@@ -19,7 +19,7 @@ public abstract class CircuitComponent : MonoBehaviour
     }
     public abstract DrawMode _drawMode { get; set; }
 
-    public void SwitchDrawMode(DrawMode mode)
+    public virtual void SwitchDrawMode(DrawMode mode)
     {
         _drawMode = mode;
         model.SetActive(mode == DrawMode.Model);

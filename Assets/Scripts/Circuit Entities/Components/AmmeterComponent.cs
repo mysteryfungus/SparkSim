@@ -22,6 +22,13 @@ public class AmmeterComponent : CircuitComponent, IValueReader
         _ammeterText.text = $"Сила тока: {value} A";
     }
 
+    public override void SwitchDrawMode(DrawMode mode)
+    { 
+        _drawMode = mode;
+        model.SetActive(mode == DrawMode.Model);
+        icon.SetActive(mode == DrawMode.Icon);
+    }
+
     [Obsolete("This method is deprecated and probably won't work. Why are you even trying to use this?")]
     public void DummyOutput()
     {
