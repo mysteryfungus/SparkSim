@@ -9,6 +9,9 @@ public class CameraController : MonoBehaviour
     private bool sprinting = false;
     private Transform _transform;
 
+    public Camera mainCamera;
+    public Camera altCamera;
+
     [SerializeField] private Transform _rotationPoint;
     private float _targetRotation;
     public float movementSpeed = 1f;
@@ -22,6 +25,24 @@ public class CameraController : MonoBehaviour
     {
         _transform = transform;
         _targetRotation = _rotationPoint.eulerAngles.y;
+        altCamera.enabled = false;
+    }
+
+    public void SwitchPerspective()
+    {
+        CircuitComponent.DrawMode mode = DrawModeSwitcher.instance.drawMode;
+        switch (mode)
+        {
+            case CircuitComponent.DrawMode.Model:
+                mainCamera.enabled = true;
+                altCamera.enabled = false;
+                break;
+
+            case CircuitComponent.DrawMode.Icon:
+                mainCamera.enabled = false;
+                altCamera.enabled = true;
+                break;
+        }
     }
 
     void FixedUpdate()
