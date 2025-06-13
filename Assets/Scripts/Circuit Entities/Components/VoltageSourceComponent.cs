@@ -15,8 +15,8 @@ public class VoltageSourceComponent : CircuitComponent
         if (circuit == null) { Debug.LogError("Circuit is null!"); return; }
         VoltageSource source = new VoltageSource(
             id,
-            Contacts[0].TemporaryNodeName,
             "0",
+            Contacts[1].TemporaryNodeName,
             Voltage
         );
         circuit.Add(source);

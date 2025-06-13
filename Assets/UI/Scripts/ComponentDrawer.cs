@@ -13,7 +13,7 @@ public class ComponentDrawer : MonoBehaviour
 
     public void SlideIn()
     {
-        transform.DOMoveY(0, SlideDuration);
+        transform.DOMoveY(45, SlideDuration);
     }
 
     public void SlideOut()

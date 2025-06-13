@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PegboardSettingsWindow : MonoBehaviour
 {
+    public static PegboardSettingsWindow instance;
     [SerializeField] PegboardCreator pegboardCreator;
     [SerializeField] Material pegboardMaterial;
     [SerializeField] Material referenceMaterial;
@@ -25,6 +26,18 @@ public class PegboardSettingsWindow : MonoBehaviour
 
         UpdateColorInputDisplay("_Base_Color", pegboardBaseColorFields);
         UpdateColorInputDisplay("_Grid_Color", pegboardGridColorFields);
+        transform.localScale = new Vector3(0, 0, 0);
+        instance = this;
+    }
+
+    public void Show()
+    { 
+        gameObject.transform.DOScale(1f, 0.25f/2);
+    }
+
+    public void Hide()
+    { 
+        gameObject.transform.DOScale(0f, 0.25f/2);
     }
 
     public void ChangeBaseColor() => ChangeColorValue("_Base_Color", pegboardBaseColorFields);
@@ -94,8 +107,10 @@ public class PegboardSettingsWindow : MonoBehaviour
     private void AnimateInvalidation(Image image)
     {
         Sequence invalidSequence = DOTween.Sequence();
-        invalidSequence.Append(image.DOColor(invalidHighlightColor, 0.25f))
-            .Append(image.DOColor(defaultColor, 0.25f));
+        invalidSequence.Append(image.DOColor(invalidHighlightColor, 0.1f))
+            .Append(image.DOColor(defaultColor, 0.1f))
+            .Append(image.DOColor(invalidHighlightColor, 0.1f))
+            .Append(image.DOColor(defaultColor, 0.1f));
 
         invalidSequence.Play();
     }

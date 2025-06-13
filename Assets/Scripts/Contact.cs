@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class Contact : MonoBehaviour
 {
     public Guid Guid { get; private set; }
-    public string NodeName { get; private set; }
+    public string NodeName;
     public CircuitComponent ParentComponent { get; set; }
     public string TemporaryNodeName { get; private set; }
 
@@ -27,6 +27,11 @@ public class Contact : MonoBehaviour
     public void SetTempName(string name)
     {
         TemporaryNodeName = "NODE-TEMP-" + name;
+    }
+
+    public void StrictSetTempName(string name)
+    {
+        TemporaryNodeName = name;
     }
 
     public void ResetTempName()

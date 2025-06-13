@@ -14,6 +14,7 @@ using UnityEngine.UIElements;
 using UnityEditor.Localization.Plugins.XLIFF.V12;
 using System.CodeDom;
 using Unity.VisualScripting;
+using Cysharp.Threading.Tasks;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -50,6 +51,15 @@ public class SimulationManager : MonoBehaviour
 
         components = new();
         FormGroups();
+
+        foreach (var group in ConnectionManager.instance.GetConnectionGroups())
+        {
+            foreach (var contact in group)
+            {
+                Debug.Log($"Contact: {contact}, NodeName: {contact.NodeName}, TempName: {contact.TemporaryNodeName}");
+            }
+        }
+
         FetchComponents();
 
         List<IValueReader> valueReaders = new();
@@ -69,7 +79,7 @@ public class SimulationManager : MonoBehaviour
     {
         if (status != SimulationStatus.Running) return;
 
-        simulation.StopSimulation();
+        //simulation.StopSimulation();
 
         components.Clear();
         ClearGroups();
@@ -98,10 +108,26 @@ public class SimulationManager : MonoBehaviour
         var groups = ConnectionManager.instance.GetConnectionGroups();
         foreach (var group in groups)
         {
-            Guid groupGuid = Guid.NewGuid();
-            foreach (var contact in group)
+            bool hasGroundNode = group.Any(contact => contact.NodeName == "0");
+            if (hasGroundNode)
             {
-                contact.SetTempName(groupGuid.ToString());
+                foreach (var contact in group)
+                {
+                    if (contact.NodeName != "0")
+                    {
+                        contact.StrictSetTempName("0");
+                    }
+                    Debug.Log($"New temp node: {contact.TemporaryNodeName}");
+                }
+            }
+            else
+            {
+                Guid groupGuid = Guid.NewGuid();
+                foreach (var contact in group)
+                {
+                    contact.SetTempName(groupGuid.ToString());
+                    Debug.Log($"New temp node: {contact.TemporaryNodeName}");
+                }
             }
         }
     }
@@ -121,14 +147,44 @@ public class SimulationManager : MonoBehaviour
     private void FetchComponents()
     {
         var _components = FindObjectsByType<CircuitComponent>(FindObjectsSortMode.None);
+        var typeCount = new Dictionary<string, int>();
+        Debug.Log("=== DIAGNOSTICS: Начало FetchComponents ===");
         foreach (var component in _components)
         {
             components.Add(component);
             component.CreateSpiceModel(circuit);
+            string typeName = component.GetType().Name;
+            if (!typeCount.ContainsKey(typeName)) typeCount[typeName] = 0;
+            typeCount[typeName]++;
+            Debug.Log($"Component: {typeName}, id: {component.id}, contacts: {component.Contacts.Count}");
+            for (int i = 0; i < component.Contacts.Count; i++)
+            {
+                var contact = component.Contacts[i];
+                Debug.Log($"  Contact[{i}]: NodeName={contact.NodeName}, TemporaryNodeName={contact.TemporaryNodeName}, Parent={contact.ParentComponent?.GetType().Name}");
+            }
         }
+        Debug.Log("=== DIAGNOSTICS: Количество компонентов по типам ===");
+        foreach (var kv in typeCount)
+            Debug.Log($"  {kv.Key}: {kv.Value}");
 
         var entities = new List<SpiceSharp.Entities.IEntity>(circuit);
-        Debug.Log($"Fetched entities for a circuit. Added entities: {string.Join(", ", entities)}");
+        Debug.Log($"Fetched entities for a circuit. Added entities: {string.Join(", ", entities.Select(e => e.Name))}");
+        Debug.Log($"=== DIAGNOSTICS: Всего сущностей в SpiceSharp Circuit: {entities.Count} ===");
+
+        // Диагностика групп соединённых контактов
+        var groups = ConnectionManager.instance.GetConnectionGroups();
+        Debug.Log($"=== DIAGNOSTICS: Всего групп соединённых контактов: {groups.Count} ===");
+        int groupIdx = 0;
+        foreach (var group in groups)
+        {
+            Debug.Log($"  Группа {groupIdx}, контактов: {group.Count}");
+            foreach (var contact in group)
+            {
+                Debug.Log($"    Contact: NodeName={contact.NodeName}, TemporaryNodeName={contact.TemporaryNodeName}, Parent={contact.ParentComponent?.GetType().Name}");
+            }
+            groupIdx++;
+        }
+        Debug.Log("=== DIAGNOSTICS: Конец FetchComponents ===");
     }
 
     [Obsolete("This method is deprecated and probably won't work. Try making an actual simulation")]
@@ -147,35 +203,21 @@ public class SimulationManager : MonoBehaviour
 
     private class RealtimeSimulation
     {
-        bool test = false;
         readonly Circuit circuit;
         readonly List<IValueReader> valueReaders;
-        CancellationTokenSource cancellationToken;
+        CancellationTokenSource cancellationToken = new();
         Task simulationTask;
         List<(AmmeterComponent, RealCurrentExport)> currentExports = new();
         List<RealVoltageExport> voltageExports;
 
         public RealtimeSimulation(Circuit circuit, List<IValueReader> valueReaders)
         {
-            if (!test)
-            {
-                this.circuit = circuit; this.valueReaders = valueReaders;
-                Reset();
-            }
-            else
-            {
-                this.circuit = new Circuit(
-                    new VoltageSource("V1", "in", "0", new Pulse(0.0, 5.0, 0.01, 1e-3, 1e-3, 0.02, 0.04)),
-                    new Resistor("R1", "in", "out", 10.0e3),
-                    new Capacitor("C1", "out", "0", 1e-6)
-                );
-
-            }
+            this.circuit = circuit; this.valueReaders = valueReaders;
+            Reset();
         }
 
         public void Reset()
         {
-            cancellationToken = null;
             simulationTask = null;
             currentExports.Clear();
         }
@@ -183,10 +225,9 @@ public class SimulationManager : MonoBehaviour
         public void StartSimulation()
         {
             Debug.Log("Starting the simulation...");
-            cancellationToken = new();
             var token = cancellationToken.Token;
 
-            Transient simulation = new("Simulation", 1e-3, double.PositiveInfinity);
+            Transient simulation = new("Simulation", 1e-3, 360000.0f);
 
             foreach (var reader in valueReaders)
             {
@@ -205,10 +246,10 @@ public class SimulationManager : MonoBehaviour
             }
 
             Debug.Log("Simulation is ready. Proceeding to the task...");
-            simulationTask = Task.Run(() =>
+            /*simulationTask = Task.Run(() =>
             {
                 try
-                {
+                {*/
                     Debug.Log("Task is awake. Starting...");
                     foreach (int _ in simulation.Run(circuit, Transient.ExportTransient))
                     {
@@ -228,19 +269,19 @@ public class SimulationManager : MonoBehaviour
                     }
                     Debug.LogWarning("We are out of the loop. That's probably not good");
                 }
-                catch (Exception ex)
+                /*catch (Exception ex)
                 {
                     Debug.LogError($"Simulation task crashed: {ex}");
                     StopSimulation();
                 }
-            }, token);
+            }, token);*/
         }
 
-        public void StopSimulation()
+        /*public void StopSimulation()
         {
             Debug.Log("Trying to stop the simulation...");
             cancellationToken?.Cancel();
             simulationTask?.Wait();
-        }
-    }
+        }*/
+    //}
 }

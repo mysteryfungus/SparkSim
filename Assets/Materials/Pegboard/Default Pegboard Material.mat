@@ -42,7 +42,7 @@ Material:
     - _Base_Metallic: 0.5
     - _Base_Smoothness: 0.5
     - _Grid_AO: 0.25
-    - _Grid_Thickness: 0.005
+    - _Grid_Thickness: 0.01
     - _Grid_Visible: 1
     - _Noise_Opacity: 0.1
     - _QueueControl: 0

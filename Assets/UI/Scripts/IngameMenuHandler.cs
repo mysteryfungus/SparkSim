@@ -27,8 +27,10 @@ public class IngameMenuHandler : MonoBehaviour
     public void Hide()
     {
         menuWindow.transform.DOScale(0f, Duration);
+        PegboardSettingsWindow.instance.Hide();
         cameraController.enabled = true;
         uiBlocker.SetActive(false);
+
     }
 
     public void QuitToMainMenu()

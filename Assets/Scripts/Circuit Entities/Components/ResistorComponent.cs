@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class ResistorComponent : CircuitComponent
 {
-    public double Resistance = 1000; // Ом
+    public double Resistance = 10.0e3; // Ом
     public override DrawMode _drawMode { get; set; }
 
     public override void CreateSpiceModel(Circuit circuit)
