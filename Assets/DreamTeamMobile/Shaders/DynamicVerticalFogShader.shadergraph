@@ -1698,7 +1698,7 @@
     "m_ObjectId": "7251b3f690ed4b88abfc037cae70de6b",
     "m_Title": "Vertical Fog",
     "m_Position": {
-        "x": -905.6000366210938,
+        "x": -905.5999145507813,
         "y": -347.1999816894531
     }
 }
@@ -2605,10 +2605,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -9.999958038330079,
-            "y": -137.99996948242188,
-            "width": 141.0,
-            "height": 94.0
+            "x": -8.800020217895508,
+            "y": -138.39999389648438,
+            "width": 207.99998474121095,
+            "height": 277.5999755859375
         }
     },
     "m_Slots": [
@@ -2621,7 +2621,7 @@
     ],
     "synonyms": [],
     "m_Precision": 0,
-    "m_PreviewExpanded": false,
+    "m_PreviewExpanded": true,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -2659,8 +2659,8 @@
     "m_ObjectId": "b701f7fa5e224ebe8949c5c7233be365",
     "m_Title": "Fog Noise",
     "m_Position": {
-        "x": -727.2000732421875,
-        "y": 246.40005493164063
+        "x": -727.199951171875,
+        "y": 246.39993286132813
     }
 }
 

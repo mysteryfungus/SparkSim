@@ -7,8 +7,8 @@
       <toc url="default_toc.xml" />
 </project_files>
 <topics>  
-  <topic url="Lessons/Lesson_2.htm" title="Resistor" /> 
-  <topic url="Lessons/Lesson_1.htm" title="Lesson 1" /> 
+  <topic url="Lessons/Lesson_2.htm" title="Lesson 1" /> 
   <topic url="Wiki/Resistor.htm" title="Lesson 2" /> 
+  <topic url="Lessons/Lesson_1.htm" title="Resistor" /> 
 </topics>
 </roboml>

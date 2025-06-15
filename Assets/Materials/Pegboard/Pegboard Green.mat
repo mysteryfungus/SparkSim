@@ -53,7 +53,7 @@ Material:
     - _Tiling_Modifier: 1
     m_Colors:
     - _Base_Color: {r: 0.1909219, g: 0.6528301, b: 0.4735009, a: 1}
-    - _Grid_Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Grid_Color: {r: 0.1197507, g: 0.45660365, b: 0.3268071, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
